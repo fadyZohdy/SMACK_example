@@ -1,0 +1,9 @@
+*.class
+*.jar
+*.log
+src/main/resources/application.conf
+.idea/*
+target/
+dist/*
+project/**/*.class
+
