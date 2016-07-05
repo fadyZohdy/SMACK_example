@@ -1,4 +1,4 @@
-package utilities
+package utils
 
 import akka.actor.{ActorRef, Actor}
 import akka.kafka.ProducerSettings
@@ -7,6 +7,7 @@ import cakesolutions.kafka.akka.{ProducerRecords, KafkaProducerActor}
 import cakesolutions.kafka.akka.KafkaProducerActor.MatcherResult
 import org.apache.kafka.common.serialization.StringSerializer
 import twitter4j._
+import utils.{StatusWithKeyword, StartCollecting, AppSettings}
 
 /**
  * Created by droidman on 22/05/16.

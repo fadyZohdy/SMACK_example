@@ -1,4 +1,4 @@
-package utilities
+package utils
 
 
 import akka.actor.Status. {Success, Failure }
@@ -7,15 +7,13 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import akka.actor._
-import utilities.TwitterHelper.{conf}
 
 import scala.concurrent.Await
 
 import twitter4j.TwitterStreamFactory
 import akka.pattern.gracefulStop
 import scala.concurrent.duration._
-import akka.pattern.ask
-
+import utils.TwitterHelper.conf
 
 /**
   * Created by droidman on 27/05/16.
@@ -30,6 +28,7 @@ class SupervisorActor(settings: AppSettings) extends Actor{
 
   implicit val system = context.system
   implicit val materializer = ActorMaterializer()
+  implicit val ec =  system.dispatcher
 
   val producer = new ReactiveKafkaProducer()
 
@@ -49,13 +48,13 @@ class SupervisorActor(settings: AppSettings) extends Actor{
 
 
 
-  implicit val ec =  system.dispatcher
+
   val route =
-    pathPrefix("twitter_stream") {
-      (get & path(Segment)) { keyword =>
-        self ! InitializeStream(keyword)
-        complete{
-          "ok"
+    path("start_stream"){
+      post{
+        parameter("query"){q =>
+          self ! InitializeStream(q)
+          complete("ok")
         }
       }
     }

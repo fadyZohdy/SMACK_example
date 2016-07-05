@@ -1,4 +1,4 @@
-package utilities
+package utils
 
 import akka.actor.Actor.Receive
 import akka.actor.{Props, Actor, ActorSystem}

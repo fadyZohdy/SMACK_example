@@ -1,4 +1,4 @@
-package utilities
+package utils
 
 import java.util.{Calendar, Date}
 import com.websudos.phantom.dsl._

@@ -1,7 +1,5 @@
 import akka.actor._
-import utilities.{SupervisorActor, AppSettings, DB}
-
-
+import utils.{SupervisorActor, AppSettings}
 
 
 /**

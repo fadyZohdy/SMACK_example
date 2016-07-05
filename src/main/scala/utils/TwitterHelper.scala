@@ -1,4 +1,4 @@
-package utilities
+package utils
 
 import entities.Tweet
 import org.joda.time.DateTime
