@@ -15,11 +15,12 @@ import twitter4j.Status
 /**
   * Created by droidman on 7/2/16.
   */
-class ReactiveKafkaProducer(implicit val system: ActorSystem, implicit val materializer: ActorMaterializer){
+class KafkaProducerReactive(implicit val system: ActorSystem, implicit val materializer: ActorMaterializer){
 
+  import AppSettings._
 
   val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
-    .withBootstrapServers("localhost:9092")
+    .withBootstrapServers(bootstrap_servers)
 
   val source = Source.actorPublisher[StatusWithKeyword](Props[StatusPublisher])
 

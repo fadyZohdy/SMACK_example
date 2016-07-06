@@ -18,6 +18,7 @@ object TweetsModel {
     object retweetcount extends IntColumn(this)
     object createdAt extends DateTimeColumn(this) with ClusteringOrder[DateTime] with Descending
     object keyword extends StringColumn(this) with PartitionKey[String]
+    object user_id extends LongColumn(this)
 
     def fromRow(row: Row): Tweet = {
       Tweet(
@@ -26,7 +27,8 @@ object TweetsModel {
         text(row),
         favouriteCount(row),
         retweetcount(row),
-        keyword(row)
+        keyword(row),
+        user_id(row)
       )
     }
   }
@@ -42,6 +44,7 @@ object TweetsModel {
         .value(_.retweetcount, tweet.retweetCount)
         .value(_.createdAt, tweet.createdAt)
         .value(_.keyword, tweet.keyword)
+        .value(_.user_id, tweet.user_id)
         .consistencyLevel_=(ConsistencyLevel.ONE)
         .future()
     }

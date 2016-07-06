@@ -10,13 +10,12 @@ import twitter4j.conf.ConfigurationBuilder
  * Created by droidman on 24/05/16.
  */
   object TwitterHelper {
-    val settings = new AppSettings()
 
-    import settings._
+    import AppSettings._
 
     //configuration builder for twitter
 
-    val conf = new ConfigurationBuilder()
+    val cb = new ConfigurationBuilder()
       .setDebugEnabled(true)
       .setOAuthConsumerKey(OAuthConsumerKey)
       .setOAuthConsumerSecret(OAuthConsumerSecret)

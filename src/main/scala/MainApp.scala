@@ -1,4 +1,5 @@
 import akka.actor._
+import org.apache.spark.{SparkContext, SparkConf}
 import utils.{SupervisorActor, AppSettings}
 
 
@@ -7,12 +8,11 @@ import utils.{SupervisorActor, AppSettings}
   */
 object MainApp extends App{
 
-  val settings = new AppSettings()
-  import settings._
+  import AppSettings._
 
   val system = ActorSystem(appName)
 
-  val superVisor = system.actorOf(Props(new SupervisorActor(settings)), "supervisor-actor")
+  val superVisor = system.actorOf(Props(new SupervisorActor()), "supervisor-actor")
   println(superVisor)
 
 }

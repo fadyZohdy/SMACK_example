@@ -16,7 +16,9 @@ import scala.util.{Failure, Success}
   */
 
 object Defaults {
-  val connector = ContactPoints(Seq("172.17.0.2")).keySpace("demo")
+
+  import AppSettings._
+  val connector = ContactPoints(hosts).keySpace(keyspace)
 }
 
 

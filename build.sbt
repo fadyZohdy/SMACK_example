@@ -15,6 +15,7 @@ resolvers ++= Seq(
   "Sonatype staging"                 at "http://oss.sonatype.org/content/repositories/staging",
   "Java.net Maven2 Repository"       at "http://download.java.net/maven/2/",
   "Twitter Repository"               at "http://maven.twttr.com",
+  "Spark Packages Repo"              at "http://dl.bintray.com/spark-packages/maven",
   Resolver.bintrayRepo("cakesolutions", "maven"),
   Resolver.bintrayRepo("websudos", "oss-releases")
 )
@@ -24,8 +25,14 @@ libraryDependencies ++= Seq(
   "org.twitter4j" % "twitter4j-stream" % "4.0.4",
   "com.typesafe.akka" %% "akka-actor" % "2.4.7",
   "com.typesafe.akka" %% "akka-http-experimental" % "2.4.7",
-  "com.google.code.gson" % "gson" % "2.6.2",
-  "net.cakesolutions" %% "scala-kafka-client-akka" % "0.7.0",
   "com.typesafe.akka" %% "akka-stream-kafka" % "0.11-M3",
-  "com.typesafe.play" % "play-json_2.11" % "2.5.4"
+  "com.typesafe.play" % "play-json_2.11" % "2.5.4" exclude("com.fasterxml.jackson.core", "jackson-databind"),
+  "dibbhatt" % "kafka-spark-consumer" % "1.0.6",
+  "org.apache.spark" %% "spark-core" % "1.6.2",
+  "org.apache.spark" %% "spark-streaming" % "1.6.2",
+  "org.apache.kafka" %% "kafka" % "0.9.0.1"
+).map(
+  _.excludeAll(
+    ExclusionRule(organization = "org.mortbay.jetty")
+  )
 )

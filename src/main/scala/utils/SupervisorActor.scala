@@ -10,29 +10,27 @@ import akka.actor._
 
 import scala.concurrent.Await
 
-import twitter4j.TwitterStreamFactory
 import akka.pattern.gracefulStop
 import scala.concurrent.duration._
-import utils.TwitterHelper.conf
 
 /**
   * Created by droidman on 27/05/16.
   */
-class SupervisorActor(settings: AppSettings) extends Actor{
+class SupervisorActor() extends Actor{
 
-  import settings._
+  import AppSettings._
 
+  DB.createTables
 
-  val tf  = new TwitterStreamFactory(conf.build)
-  val twitterActor = context.actorOf(Props(new CollectTweetsActor(tf, self, settings)), "twitter-actor")
+  val twitterActor = context.actorOf(Props(new CollectTweetsActor(self)), "twitter-actor")
 
   implicit val system = context.system
   implicit val materializer = ActorMaterializer()
   implicit val ec =  system.dispatcher
 
-  val producer = new ReactiveKafkaProducer()
+  val producer = new KafkaProducerReactive()
 
-
+  context.actorOf(Props[KafkaSparkConsumer])
 
   override def receive = {
     case InitializeStream(s) =>
