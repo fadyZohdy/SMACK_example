@@ -1,49 +1,54 @@
 package utils
 
-import akka.actor.Actor
+import akka.actor.{Actor}
 import akka.actor.Actor.Receive
-import consumer.kafka.ReceiverLauncher
-import entities.Tweet
-import org.apache.spark.SparkConf
-import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.Seconds
+import entities.{TweetByUser, User, Tweet}
+import kafka.common.TopicAndPartition
+import kafka.message.MessageAndMetadata
+import kafka.serializer.StringDecoder
 import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.kafka.KafkaUtils
 import play.api.libs.json.Json
 
 /**
   * Created by droidman on 7/5/16.
   */
-class KafkaSparkConsumer extends Actor {
+class KafkaSparkConsumer(ssc: StreamingContext) extends Actor {
 
-  val conf = new SparkConf().setAppName("test").setMaster("local[*]")
+  import AppSettings._
 
-  val ssc = new StreamingContext(conf, Seconds(2))
+  val topics  = kafkaTopics.map(t => (TopicAndPartition(t, 0), 1L)).toMap
 
-  val kafkaProperties: Map[String, String] = Map("zookeeper.hosts" -> "40.114.250.188",
-    "zookeeper.port" -> "2181",
-    "zookeeper.consumer.path" -> "/spark-kafka",
-    "zookeeper.broker.path" -> "/brokers" ,
-    "kafka.topic" -> "tweets",
-    "zookeeper.consumer.connection" -> "40.114.250.188:2181",
-    "kafka.consumer.id" -> "12345",
-    //optional properties
-    "consumer.forcefromstart" -> "true",
-    "consumer.backpressure.enabled" -> "true",
-    "consumer.fillfreqms" -> "250")
+  val kafkaStreams = (1 to noOfPartitions).map{_ =>
+//    KafkaUtils.createStream(ssc, zookeeper, "insider", topics).map(_._2)
+    KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder, List[String]](
+      ssc,
+      Map("metadata.broker.list" -> bootstrap_servers),
+      topics,
+      (mm: MessageAndMetadata[String, String]) => List(mm.topic, mm.message))
+  }
 
-  val props = new java.util.Properties()
-  kafkaProperties foreach { case (key,value) => props.put(key, value) }
+  val unifiedStream = ssc.union(kafkaStreams)
 
-  val tmp_stream = ReceiverLauncher.launch(ssc, props, 2,StorageLevel.MEMORY_ONLY).map(m => new String(m.getPayload))
-
-  tmp_stream.foreachRDD{rdd =>
+  unifiedStream.foreachRDD{rdd =>
     if(!rdd.isEmpty()) {
-        rdd.foreach { tweet =>
-            val t = Json.parse(tweet).as[Tweet]
-            DBAccess.tweets.store(t)
+        rdd.foreach{ m =>
+          m(0) match {
+            case "tweets" =>
+              val tweet = Json.parse(m(1)).as[Tweet]
+              DBAccess.tweets.store(tweet)
+            case "users" =>
+              val user = Json.parse(m(1)).as[User]
+              DBAccess.users.store(user)
+            case "tweetByUser" =>
+              val tbu = Json.parse(m(1)).as[TweetByUser]
+              DBAccess.tweetsByUser.store(tbu)
+          }
+
         }
     }
   }
+
 
   ssc.start()
   ssc.awaitTermination()

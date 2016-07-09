@@ -3,7 +3,8 @@ scalaVersion := "2.11.8"
 name := "phantom-twitter"
 
 val PhantomVersion = "1.22.0"
-val sprayV = "1.3.2"
+val sparkVersion = "1.6.2"
+val akkaVersion = "2.4.7"
 
 resolvers ++= Seq(
   "spray repo"                       at "http://repo.spray.io",
@@ -23,14 +24,15 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.websudos" %% "phantom-dsl" % PhantomVersion,
   "org.twitter4j" % "twitter4j-stream" % "4.0.4",
-  "com.typesafe.akka" %% "akka-actor" % "2.4.7",
-  "com.typesafe.akka" %% "akka-http-experimental" % "2.4.7",
+  "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-core" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream-kafka" % "0.11-M3",
-  "com.typesafe.play" % "play-json_2.11" % "2.5.4" exclude("com.fasterxml.jackson.core", "jackson-databind"),
-  "dibbhatt" % "kafka-spark-consumer" % "1.0.6",
-  "org.apache.spark" %% "spark-core" % "1.6.2",
-  "org.apache.spark" %% "spark-streaming" % "1.6.2",
-  "org.apache.kafka" %% "kafka" % "0.9.0.1"
+  "com.typesafe.play" %% "play-json" % "2.5.4" exclude("com.fasterxml.jackson.core", "jackson-databind"),
+  "org.apache.spark" %% "spark-core" % sparkVersion,
+  "org.apache.spark" %% "spark-streaming" % sparkVersion,
+  "org.apache.kafka" %% "kafka" % "0.8.2.1",
+  "org.apache.spark" %% "spark-streaming-kafka" % sparkVersion
 ).map(
   _.excludeAll(
     ExclusionRule(organization = "org.mortbay.jetty")

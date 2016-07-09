@@ -28,3 +28,6 @@ import twitter4j.conf.ConfigurationBuilder
   case class InitializeStream(s :String)
   case class KillActor(s :String)
   case class StatusWithKeyword(s: Status, k: String)
+  case class Evaluate(tweet_text: String)
+  case class SentimentResult(p: Int, n: Int)
+  case object GetResult

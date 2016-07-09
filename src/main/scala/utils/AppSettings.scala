@@ -28,6 +28,9 @@ object AppSettings extends Serializable {
   val key_serializer = kafka.getString("serializer")
   val value_serializer = kafka.getString("serializer")
   val zookeeper = kafka.getString("zookeeper.connect")
+  val kafkaTopics = kafka.getString("topics").split(",").toList
+
+
 
   val spark = rootConfig.getConfig("spark")
   val sparkMaster = spark.getString("master")

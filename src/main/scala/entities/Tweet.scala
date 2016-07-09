@@ -30,7 +30,7 @@ object Tweet {
     )
   }
 
-  implicit val placeWrites = new Writes[Tweet] {
+  implicit val tweetWrites = new Writes[Tweet] {
     def writes(tweet: Tweet) = Json.obj(
       "id" -> tweet.id,
       "createdAt" -> tweet.createdAt,

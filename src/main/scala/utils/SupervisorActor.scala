@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import akka.actor._
+import org.apache.spark.streaming.StreamingContext
 
 import scala.concurrent.Await
 
@@ -16,7 +17,7 @@ import scala.concurrent.duration._
 /**
   * Created by droidman on 27/05/16.
   */
-class SupervisorActor() extends Actor{
+class SupervisorActor(ssc: StreamingContext) extends Actor{
 
   import AppSettings._
 
@@ -30,7 +31,7 @@ class SupervisorActor() extends Actor{
 
   val producer = new KafkaProducerReactive()
 
-  context.actorOf(Props[KafkaSparkConsumer])
+  context.actorOf(Props(new KafkaSparkConsumer(ssc)))
 
   override def receive = {
     case InitializeStream(s) =>
@@ -56,6 +57,13 @@ class SupervisorActor() extends Actor{
         }
       }
     }
+//    path(""){
+//      get{
+//        complete{
+//
+//        }
+//      }
+//    }
 
   val serverBinding = Http().bindAndHandle(route, "localhost", 8888)
 

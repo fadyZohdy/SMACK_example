@@ -1,8 +1,10 @@
 package entities
 
 import org.joda.time.DateTime
-import play.api.libs.json.{Writes, Json}
+import play.api.libs.json.{JsPath, Reads, Json, Writes}
 import twitter4j.Status
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 case class TweetByUser(
                         screenName: String,
@@ -31,4 +33,12 @@ object TweetByUser {
       "text" -> tweet.text,
       "createdAt" -> tweet.createdAt)
   }
+
+  implicit val tweetByUserReads: Reads[TweetByUser] = (
+    (JsPath \ "screenName").read[String] and
+      (JsPath \ "tweet_id").read[Long] and
+      (JsPath \ "user_id").read[Long] and
+      (JsPath \ "text").read[String] and
+      (JsPath \ "createdAt").read[DateTime]
+    )(TweetByUser.apply(_: String, _: Long, _: Long, _: String, _: DateTime))
 }

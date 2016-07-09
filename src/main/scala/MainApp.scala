@@ -1,4 +1,5 @@
 import akka.actor._
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkContext, SparkConf}
 import utils.{SupervisorActor, AppSettings}
 
@@ -12,7 +13,11 @@ object MainApp extends App{
 
   val system = ActorSystem(appName)
 
-  val superVisor = system.actorOf(Props(new SupervisorActor()), "supervisor-actor")
+  val conf = new SparkConf().setAppName("test").setMaster("local[*]")
+
+  val ssc = new StreamingContext(conf, Seconds(2))
+
+  val superVisor = system.actorOf(Props(new SupervisorActor(ssc)), "supervisor-actor")
   println(superVisor)
 
 }
