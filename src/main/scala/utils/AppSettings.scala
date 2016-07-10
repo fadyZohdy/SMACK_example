@@ -40,4 +40,7 @@ object AppSettings extends Serializable {
   val cassandra = rootConfig.getConfig("cassandra")
   val hosts = cassandra.getString("hosts").split(",").toSeq
   val keyspace = cassandra.getString("keyspace")
+
+  val alchemyAPI = rootConfig.getConfig("AlchemyAPI")
+  val apiKey = alchemyAPI.getString("credentials.apikey")
 }

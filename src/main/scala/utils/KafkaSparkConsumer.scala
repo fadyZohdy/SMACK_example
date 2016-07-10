@@ -19,24 +19,21 @@ class KafkaSparkConsumer(ssc: StreamingContext) extends Actor {
 
   val topics  = kafkaTopics.map(t => (TopicAndPartition(t, 0), 1L)).toMap
 
-  val kafkaStreams = (1 to noOfPartitions).map{_ =>
-//    KafkaUtils.createStream(ssc, zookeeper, "insider", topics).map(_._2)
+  val kafkaStream =
     KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder, List[String]](
       ssc,
       Map("metadata.broker.list" -> bootstrap_servers),
       topics,
       (mm: MessageAndMetadata[String, String]) => List(mm.topic, mm.message))
-  }
 
-  val unifiedStream = ssc.union(kafkaStreams)
-
-  unifiedStream.foreachRDD{rdd =>
+  kafkaStream.foreachRDD{rdd =>
     if(!rdd.isEmpty()) {
         rdd.foreach{ m =>
           m(0) match {
             case "tweets" =>
               val tweet = Json.parse(m(1)).as[Tweet]
               DBAccess.tweets.store(tweet)
+              SentimentAnalyser.evaluate(tweet.text)
             case "users" =>
               val user = Json.parse(m(1)).as[User]
               DBAccess.users.store(user)

@@ -17,7 +17,6 @@ resolvers ++= Seq(
   "Java.net Maven2 Repository"       at "http://download.java.net/maven/2/",
   "Twitter Repository"               at "http://maven.twttr.com",
   "Spark Packages Repo"              at "http://dl.bintray.com/spark-packages/maven",
-  Resolver.bintrayRepo("cakesolutions", "maven"),
   Resolver.bintrayRepo("websudos", "oss-releases")
 )
 
@@ -32,7 +31,9 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion,
   "org.apache.spark" %% "spark-streaming" % sparkVersion,
   "org.apache.kafka" %% "kafka" % "0.8.2.1",
-  "org.apache.spark" %% "spark-streaming-kafka" % sparkVersion
+  "org.apache.spark" %% "spark-streaming-kafka" % sparkVersion,
+  "org.slf4j" % "slf4j-simple" % "1.7.21",
+  "com.ibm.watson.developer_cloud" % "java-sdk" % "3.0.1"
 ).map(
   _.excludeAll(
     ExclusionRule(organization = "org.mortbay.jetty")
